@@ -32,7 +32,7 @@ cd EB _DASCustomer_Task
     ```sh
     dotnet ef database update
     ```
-3. Veritabanı yedeğini (`CustomerDb.bak`) SQL Server Management Studio (SSMS) kullanarak geri yükleyin.
+3. Veritabanı yedeğini (`CustomerDb.bak`) SQL Server Management Studio (SSMS) kullanarak geri yükleyin (`CustomerDb.bak`) bak dosyası webapi projesindedir.
 
 ### Uygulamayı Çalıştırma
 
