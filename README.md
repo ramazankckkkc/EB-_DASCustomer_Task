@@ -61,6 +61,10 @@ Swagger aracılığıyla API dokümantasyonu mevcuttur. Uygulama çalıştığı
 ### Müşteri Web İşlemleri
 - **Tüm Müşterileri Listeleme**: ` /Customer`
 - **Müşteri Oluştur**: `/Customer/CustomerAdd`
+  
+- Müşteri ekle butonuna tıklayarak müşteri ekleme sayfasına gidip müşteri ekleyebilirsiniz.
+![image](https://github.com/user-attachments/assets/0babd968-fee9-4baf-b732-9f849e64f5bb)
+
 - Müşterilerin listelenmesi yukarıdaki Müşteriler butonun tıklayarak müşterileri görebilirsiniz.
 ![image](https://github.com/user-attachments/assets/63a8fadf-a09a-4207-8e0d-5258261e6a66)
 
