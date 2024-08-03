@@ -64,7 +64,7 @@ Swagger aracılığıyla API dokümantasyonu mevcuttur. Uygulama çalıştığı
 - Müşterilerin listelenmesi yukarıdaki Müşteriler butonun tıklayarak müşterileri görebilirsiniz.
 ![image](https://github.com/user-attachments/assets/63a8fadf-a09a-4207-8e0d-5258261e6a66)
 
--Tabloda müşteriye tıkladıgında pop up açılıp güncelleme ve silme işlemleri yapılıyor.
+- Tabloda müşteriye tıkladıgında pop up açılıp güncelleme ve silme işlemleri yapılıyor.
 ![image](https://github.com/user-attachments/assets/38ebc038-bc06-4756-bc6c-49b4a55f57b4)
 
 ## Lisans
