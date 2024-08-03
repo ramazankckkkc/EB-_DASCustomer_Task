@@ -1,0 +1,191 @@
+﻿@model List<Customer>
+@{
+    ViewData["Title"] = "Müşteri Sayfası";
+
+}
+
+<div class="text-center">
+    <table class="table">
+        <thead>
+            <tr>
+                @* <th scope="col">Id</th> *@
+                <th scope="col">Ad</th>
+                <th scope="col">Soyad</th>
+                <th scope="col">E-Mail</th>
+                <th scope="col">Dogum Tarihi</th>
+                <th scope="col">Telefon Numarası</th>
+                <th scope="col">Fotoğraf</th>
+                -
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Model)
+            {
+                <tr onclick="showDetails('@customer.Id')" style="cursor: pointer;">
+                    @* <th scope="row">@customer.Id</th> *@
+                    <td>@customer.FirstName</td>
+                    <td>@customer.LastName</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.BirthDay.ToShortDateString()</td>
+                    <td>@customer.PhoneNumber</td>
+                    <td>
+                        <img src="https://localhost:7078/Images/@customer.ImageUrl.ToString()" alt="" title="@($"{customer.FirstName} {customer.LastName}")" style="width: 50px; height: 50px; object-fit: cover;" />
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+
+
+</div>
+<div class="modal fade" id="customerModal" tabindex="-1" aria-labelledby="customerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerModalLabel">Müşteri Detayları</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="updateFirstName" placeholder="Ad" class="form-control mb-2">
+                <input type="text" id="updateLastName" placeholder="Soyad" class="form-control mb-2">
+                <input type="email" id="updateEmail" placeholder="E-Mail" class="form-control mb-2">
+                <input type="text" id="updatePhoneNumber" placeholder="Telefon Numarası" class="form-control mb-2">
+                <input type="date" id="updateBirthDay" placeholder="Doğum Tarihi" class="form-control mb-2">
+                <!-- Resim -->
+                <div class="form-group">
+                    <label for="updateImage">Resim Yükle</label>
+                    <input type="file" id="updateImage" name="Image" class="form-control" accept="image/*">
+                    <img id="imagePreview" src="" alt="Resim Önizleme" style="width: 50px; height: 50px; object-fit: cover; margin-top: 10px; display: none;" />
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="updateButton">Güncelle</button>
+                <button type="button" class="btn btn-danger" id="deleteButton">Sil</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentCustomerId; // Güncel müşteri ID'si
+
+    function showDetails(customerId) {
+        currentCustomerId = customerId;
+        fetch(`https://localhost:7078/api/Customers/${customerId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(details => {
+                // Müşteri detaylarını göster
+                let birthDay = new Date(details.birthDay);
+                let year = birthDay.getFullYear();
+                let month = ('0' + (birthDay.getMonth() + 1)).slice(-2);
+                let day = ('0' + birthDay.getDate()).slice(-2);
+                let formattedDate = `${year}-${month}-${day}`;
+
+                // Güncelleme alanlarını doldur
+                document.getElementById('updateFirstName').value = details.firstName;
+                document.getElementById('updateLastName').value = details.lastName;
+                document.getElementById('updateEmail').value = details.email;
+                document.getElementById('updatePhoneNumber').value = details.phoneNumber;
+                document.getElementById('updateBirthDay').value = formattedDate;
+                const imageUrl = `https://localhost:7078/Images/${details.imageUrl}`;
+                const imagePreview = document.getElementById('imagePreview');
+                imagePreview.src = imageUrl;
+                imagePreview.style.display = 'block'; // Resmi görünür yap
+                $('#customerModal').modal('show'); // Modal'ı aç
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Detayları alırken bir hata oluştu.');
+            });
+    }
+
+    // Güncelleme butonuna tıklama
+    document.getElementById('updateButton').addEventListener('click', function () {
+        const updatedCustomer = new FormData(); // FormData nesnesi oluşturun
+        updatedCustomer.append('id', currentCustomerId); // Müşteri ID'sini ekleyin
+        updatedCustomer.append('firstName', document.getElementById('updateFirstName').value);
+        updatedCustomer.append('lastName', document.getElementById('updateLastName').value);
+        updatedCustomer.append('email', document.getElementById('updateEmail').value);
+        updatedCustomer.append('phoneNumber', document.getElementById('updatePhoneNumber').value);
+        updatedCustomer.append('birthDay', document.getElementById('updateBirthDay').value);
+
+        // Eğer bir resim yüklenmişse onu da ekleyin
+        const imageInput = document.getElementById('updateImage');
+        if (imageInput.files.length > 0) {
+            updatedCustomer.append('Image', imageInput.files[0]);
+        }
+
+        fetch(`https://localhost:7078/api/Customers/Update/${currentCustomerId}`, {
+            method: 'PUT',
+            body: updatedCustomer // FormData'yı gönder
+        })
+            .then(response => {
+                if (!response.ok) {
+                    //backend dönen hatayı firlatma json parse edip
+                    return response.json().then(errorData => {
+                        throw new Error(JSON.stringify(errorData));
+                    });
+                }
+                alert('Müşteri bilgileri güncellendi!');
+                $('#customerModal').modal('hide');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                console.error('Error:', error.message);
+
+                // Backend'den dönen hata mesajını alma
+                let exceptionError;
+                try {
+                    exceptionError = JSON.parse(error.message);
+                    console.log(exceptionError.detail)
+                } catch (e) {
+                    alert('Güncelleme sırasında bir hata oluştu.');
+                    return;
+                }
+                //Validation Hata mesajlarını
+                const validationErrors = exceptionError.ValidationErrors;
+
+                if (validationErrors && validationErrors.length > 0) {
+                    // Validation hatalarını listele
+                    let errorMessage = 'Lütfen düzeltin:\n';
+                    validationErrors.forEach(validationError => {
+                        errorMessage += `${validationError.propertyName}: ${validationError.errorMessage}\n`;
+                    });
+                    alert(errorMessage); // Kullanıcıya hata mesajlarını göster
+                } else {
+                    // Diğer hata mesajlarını göster
+                    alert(exceptionError.detail || 'Güncelleme sırasında bir hata oluştu.');
+                }
+            });
+
+    });
+
+    // Silme butonuna tıklama
+    document.getElementById('deleteButton').addEventListener('click', function () {
+        if (confirm("Bu müşteri kaydını silmek istediğinize emin misiniz?")) {
+            fetch(`https://localhost:7078/api/Customers/Delete/${currentCustomerId}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    alert('Müşteri kaydı silindi!');
+                    $('#customerModal').modal('hide'); // Modal'ı kapat
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Silme sırasında bir hata oluştu.');
+                });
+        }
+    });
+</script>

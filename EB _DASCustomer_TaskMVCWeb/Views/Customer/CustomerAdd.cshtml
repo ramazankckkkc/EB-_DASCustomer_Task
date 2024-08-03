@@ -1,0 +1,106 @@
+﻿@model CreateCustomerModel
+
+<div class="container mt-5">
+    <h2 class="text-primary">Yeni Müşteri Ekle</h2>
+    <form id="customerForm" method="post" enctype="multipart/form-data" onsubmit="return handleSubmit(event)">
+        <div class="form-group">
+            <label for="addFirstName">Ad</label>
+            <input type="text" id="addFirstName" name="FirstName" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="addLastName">Soyad</label>
+            <input type="text" id="addLastName" name="LastName" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="addEmail">E-posta</label>
+            <input type="email" id="addEmail" name="Email" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="addPhoneNumber">Telefon Numarası</label>
+            <input type="text" id="addPhoneNumber" name="PhoneNumber" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="addBirthDay">Doğum Tarihi</label>
+            <input type="date" id="addBirthDay" name="BirthDay" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="addImage">Resim Yükle</label>
+            <input type="file" id="addImage" name="Image" class="form-control" accept="image/*" required>
+        </div>
+
+        <div class="form-group mt-4">
+            <button type="submit" class="btn btn-primary">Ekle</button>
+            <a asp-action="Index" class="btn btn-secondary">Geri Dön</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    async function handleSubmit(event) {
+        event.preventDefault(); // Sayfanın yenilenmesini önler
+        const form = document.getElementById('customerForm');
+        const formData = new FormData();
+
+        // Form elemanlarını al ve FormData'ya ekle
+        const firstName = form.querySelector('[name="FirstName"]').value;
+        const lastName = form.querySelector('[name="LastName"]').value;
+        const email = form.querySelector('[name="Email"]').value;
+        const phoneNumber = form.querySelector('[name="PhoneNumber"]').value;
+        const birthDay = form.querySelector('[name="BirthDay"]').value;
+        const image = form.querySelector('[name="Image"]').files[0];
+
+        formData.append('FirstName', firstName);
+        formData.append('LastName', lastName);
+        formData.append('Email', email);
+        formData.append('PhoneNumber', phoneNumber);
+        formData.append('BirthDay', birthDay);
+        formData.append('Image', image); // Resim dosyasını ekle
+
+        try {
+            const response = await fetch(`https://localhost:7078/api/Customers/Add/`, {
+                method: form.method,
+                body: formData
+            });
+
+            if (!response.ok) {
+                // Hata durumunda yanıtı JSON olarak okuyun
+                const errorData = await response.json(); // Yanıtı JSON olarak oku
+                throw new Error(JSON.stringify(errorData)); // Hata verisini fırlat
+            }
+
+            alert('Müşteri eklendi!');
+            //yönlerdirme listeleme sayfasına
+            window.location.href = '@Url.Action("Index", "Customer")';
+
+        } catch (error) {
+            console.error('Error:', error);
+            console.error('Error:', error.message);
+            // Backend'den dönen hata mesajını alma
+            let exceptionError;
+            try {
+                exceptionError = JSON.parse(error.message);
+                console.log(exceptionError.detail);
+            } catch (e) {
+                alert('Güncelleme sırasında bir hata oluştu.');
+                return;
+            }
+            // Hata mesajlarını
+            const validationErrors = exceptionError.ValidationErrors;
+            if (validationErrors && validationErrors.length > 0) {
+                // Validation(dogrulama) hatalarını listele
+                let errorMessage = 'Lütfen düzeltin:\n';
+                validationErrors.forEach(validationError => {
+                    errorMessage += `${validationError.propertyName}: ${validationError.errorMessage}\n`;
+                });
+                alert(errorMessage); // Kullanıcıya hata mesajlarını göster
+            } else {
+                alert(exceptionError.detail || 'Güncelleme sırasında bir hata oluştu.');
+            }
+        }
+    }
+</script>

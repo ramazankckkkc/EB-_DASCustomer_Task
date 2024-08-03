@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EB _DASCustomer_TaskWebAPI", "EB _DASCustomer_TaskWebAPI\EB _DASCustomer_TaskWebAPI.csproj", "{245397DE-A740-4A1F-B32E-98F487BED002}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EB _DASCustomer_TaskMVCWeb", "EB _DASCustomer_TaskMVCWeb\EB _DASCustomer_TaskMVCWeb.csproj", "{3FE615BF-8AAD-4139-92B5-88E545E451E6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{245397DE-A740-4A1F-B32E-98F487BED002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{245397DE-A740-4A1F-B32E-98F487BED002}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{245397DE-A740-4A1F-B32E-98F487BED002}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{245397DE-A740-4A1F-B32E-98F487BED002}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FE615BF-8AAD-4139-92B5-88E545E451E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FE615BF-8AAD-4139-92B5-88E545E451E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FE615BF-8AAD-4139-92B5-88E545E451E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FE615BF-8AAD-4139-92B5-88E545E451E6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {915F8796-4CDC-4F2F-AE7F-74E58C73E557}
+	EndGlobalSection
+EndGlobal
